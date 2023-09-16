@@ -1,6 +1,5 @@
 package com.enhance.lencfy.presentation.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -8,12 +7,13 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.enhance.lencfy.R
 import com.enhance.lencfy.databinding.ActivityMainBinding
 import com.enhance.lencfy.util.Constants
+import com.ramotion.circlemenu.CircleMenuView
 import ly.img.android.pesdk.PhotoEditorSettingsList
 import ly.img.android.pesdk.assets.filter.basic.FilterPackBasic
 import ly.img.android.pesdk.assets.font.basic.FontPackBasic
@@ -26,6 +26,7 @@ import ly.img.android.pesdk.backend.model.constant.OutputMode
 import ly.img.android.pesdk.backend.model.state.LoadSettings
 import ly.img.android.pesdk.backend.model.state.PhotoEditorSaveSettings
 import ly.img.android.pesdk.ui.activity.PhotoEditorBuilder
+import ly.img.android.pesdk.ui.model.state.UiConfigAspect
 import ly.img.android.pesdk.ui.model.state.UiConfigFilter
 import ly.img.android.pesdk.ui.model.state.UiConfigFrame
 import ly.img.android.pesdk.ui.model.state.UiConfigOverlay
@@ -35,6 +36,7 @@ import ly.img.android.pesdk.ui.panels.item.PersonalStickerAddItem
 import ly.img.android.serializer._3.IMGLYFileWriter
 import java.io.File
 import java.io.IOException
+
 
 class LencfyMainActivity() : AppCompatActivity() {
 
@@ -51,14 +53,20 @@ class LencfyMainActivity() : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setTheme(R.style.Base_Theme_Lencfy)
         setContentView(binding.root)
-        val openGallery = findViewById<Button>(R.id.openGallery)
-        val openCamera = findViewById<Button>(R.id.openCamera)
 
-        openGallery.setOnClickListener {
-            openSystemGalleryToSelectAnImage()
-        }
-        openCamera.setOnClickListener {
-            startSystemCameraToCaptureAnImage()
+        val circularMenu = binding.circularMenu
+        circularMenu.eventListener = object : CircleMenuView.EventListener() {
+
+            override fun onButtonClickAnimationStart(view: CircleMenuView, index: Int) {
+                Log.d("D", "onButtonClickAnimationStart| index: $index")
+                super.onButtonClickAnimationStart(view, index)
+                when(index){
+                    0 -> openSystemGalleryToSelectAnImage()
+                    1 -> startSystemCameraToCaptureAnImage()
+                    else -> {}
+                }
+            }
+
         }
 
     }
@@ -88,6 +96,11 @@ class LencfyMainActivity() : AppCompatActivity() {
             startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE)
         } catch (ex: ActivityNotFoundException) {
             // Handle the case where no camera app is installed
+            Toast.makeText(
+                this,
+                "No Camera APP installed or Supported",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
