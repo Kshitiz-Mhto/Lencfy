@@ -33,8 +33,5 @@ Lencfy 🚀 – Your go-to photo editing tool. Lens It, Own It, Revolutionize yo
 <td>
 <img src="assets/editing_screenshot.png" alt="editscreen" height="auto">
 </td>
-<td>
-<img src="assets/editing_screenshot1.png" alt="editscreen" height="auto">
-</td>
 </tr>
 </table>
