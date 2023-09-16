@@ -26,7 +26,6 @@ import ly.img.android.pesdk.backend.model.constant.OutputMode
 import ly.img.android.pesdk.backend.model.state.LoadSettings
 import ly.img.android.pesdk.backend.model.state.PhotoEditorSaveSettings
 import ly.img.android.pesdk.ui.activity.PhotoEditorBuilder
-import ly.img.android.pesdk.ui.model.state.UiConfigAspect
 import ly.img.android.pesdk.ui.model.state.UiConfigFilter
 import ly.img.android.pesdk.ui.model.state.UiConfigFrame
 import ly.img.android.pesdk.ui.model.state.UiConfigOverlay
