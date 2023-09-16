@@ -10,8 +10,10 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import com.enhance.lencfy.R
 import com.enhance.lencfy.databinding.ActivityMainBinding
+import com.enhance.lencfy.util.Constants
 import ly.img.android.pesdk.PhotoEditorSettingsList
 import ly.img.android.pesdk.assets.filter.basic.FilterPackBasic
 import ly.img.android.pesdk.assets.font.basic.FontPackBasic
@@ -50,9 +52,13 @@ class LencfyMainActivity() : AppCompatActivity() {
         setTheme(R.style.Base_Theme_Lencfy)
         setContentView(binding.root)
         val openGallery = findViewById<Button>(R.id.openGallery)
+        val openCamera = findViewById<Button>(R.id.openCamera)
 
         openGallery.setOnClickListener {
             openSystemGalleryToSelectAnImage()
+        }
+        openCamera.setOnClickListener {
+            startSystemCameraToCaptureAnImage()
         }
 
     }
@@ -67,6 +73,21 @@ class LencfyMainActivity() : AppCompatActivity() {
                 "No Gallery APP installed",
                 Toast.LENGTH_LONG
             ).show()
+        }
+    }
+
+    fun startSystemCameraToCaptureAnImage(){
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            val directory = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "demo_directory")
+            directory.mkdirs() // Create the directory if it doesn't exist
+
+            val file = File(directory, "demo.jpg")
+            val photoURI: Uri = FileProvider.getUriForFile(this, Constants.AUTHORITY, file)
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+            startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE)
+        } catch (ex: ActivityNotFoundException) {
+            // Handle the case where no camera app is installed
         }
     }
 
@@ -94,6 +115,41 @@ class LencfyMainActivity() : AppCompatActivity() {
             // Open Editor with some uri in this case with an image selected from the system gallery.
             val selectedImage = intent.data
             if (selectedImage != null) {
+                openEditor(selectedImage)
+            } else if (requestCode == PESDK_RESULT) {
+                // Editor has saved an Image.
+                val data = EditorSDKResult(intent)
+
+                Log.i("PESDK", "Source image is located here ${data.sourceUri}")
+                Log.i("PESDK", "Result image is located here ${data.resultUri}")
+
+                // TODO: Do something with the result image
+
+                // OPTIONAL: read the latest state to save it as a serialisation
+                val lastState = data.settingsList
+                try {
+                    IMGLYFileWriter(lastState).writeJson(
+                        File(
+                            Environment.getExternalStorageDirectory(),
+                            "serialisationReadyToReadWithPESDKFileReader.json"
+                        )
+                    )
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+
+                lastState.release()
+
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == CAMERA_REQUEST_CODE) {
+            Log.i("result", "testing101")
+            val imageUri = Uri.parse("file://${Constants.TEMP_IMAGEPATH}")
+            openEditor(imageUri)
+            // Open Editor with some uri in this case with an image selected from the system gallery.
+            val selectedImage = intent.data
+            if (selectedImage != null) {
+                Log.i("result1", "testing1011111111")
                 openEditor(selectedImage)
             } else if (requestCode == PESDK_RESULT) {
                 // Editor has saved an Image.
