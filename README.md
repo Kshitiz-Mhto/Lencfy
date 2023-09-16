@@ -23,10 +23,18 @@ Lencfy 🚀 – Your go-to photo editing tool. Lens It, Own It, Revolutionize yo
 <img src="assets/landing_screenshot.png" alt="flashscreen" height="auto">
 </td>
 <td>
-<img src="assets/home_screen_screenshot.png" alt="flashscreen" height="auto">
+<img src="assets/home_screen_screenshot.png" alt="home" height="auto">
 </td>
 <td>
-<img src="assets/home_screenshot1.png" alt="flashscreen" height="auto">
+<img src="assets/home_screenshot1.png" alt="home" height="auto">
+</td>
+</tr>
+<tr>
+<td>
+<img src="assets/editing_screenshot.png" alt="editscreen" height="auto">
+</td>
+<td>
+<img src="assets/editing_screenshot1.png" alt="editscreen" height="auto">
 </td>
 </tr>
 </table>
