@@ -11,7 +11,7 @@
 ## Introduction
 
 <p align= "center">
-Lencfy 🚀 – Your go-to photo editing tool. Lens It, Own It, Revolutionize your images with our intuitive software, empowering you to create stunning visuals effortlessly. 
+Lencfy 🚀 – Your go-to photo editing tool. Lens It, Own It, Revolutionize your images with our intuitive software, empowering you to create stunning visuals effortlessly.
 </p>
 
 
