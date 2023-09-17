@@ -86,6 +86,41 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/urlLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        >
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/urlInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/url_text"
+            app:startIconDrawable="@drawable/ic_web"
+            app:startIconTint="@color/menuButton"
+            app:endIconTint="@color/menuButton"
+            android:textColorHint="@color/menuButton"
+            android:visibility="gone"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/enteredUrl"
+                android:textSize="20sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/menuButton"
+                android:inputType="text"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -100,6 +135,7 @@
             app:distance="70dp"
             app:icon_color="@color/menuButton"
             app:icon_menu= "@drawable/ic_photos_add"
+            android:backgroundTint="@color/menuButton"
             app:icon_close="@drawable/lencfy_bgremoved_logo"
             app:button_colors="@array/colors"
             app:button_icons="@array/icons"

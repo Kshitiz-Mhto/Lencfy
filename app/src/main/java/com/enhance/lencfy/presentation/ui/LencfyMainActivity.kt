@@ -1,12 +1,16 @@
 package com.enhance.lencfy.presentation.ui
 
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -14,6 +18,10 @@ import com.enhance.lencfy.R
 import com.enhance.lencfy.databinding.ActivityMainBinding
 import com.enhance.lencfy.util.Constants
 import com.ramotion.circlemenu.CircleMenuView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ly.img.android.pesdk.PhotoEditorSettingsList
 import ly.img.android.pesdk.assets.filter.basic.FilterPackBasic
 import ly.img.android.pesdk.assets.font.basic.FontPackBasic
@@ -35,6 +43,7 @@ import ly.img.android.pesdk.ui.panels.item.PersonalStickerAddItem
 import ly.img.android.serializer._3.IMGLYFileWriter
 import java.io.File
 import java.io.IOException
+import java.net.URL
 
 
 class LencfyMainActivity() : AppCompatActivity() {
@@ -59,9 +68,10 @@ class LencfyMainActivity() : AppCompatActivity() {
             override fun onButtonClickAnimationStart(view: CircleMenuView, index: Int) {
                 Log.d("D", "onButtonClickAnimationStart| index: $index")
                 super.onButtonClickAnimationStart(view, index)
-                when(index){
+                when (index) {
                     0 -> openSystemGalleryToSelectAnImage()
                     1 -> startSystemCameraToCaptureAnImage()
+                    2 -> downloadImgFromRemoteUrl()
                     else -> {}
                 }
             }
@@ -83,10 +93,11 @@ class LencfyMainActivity() : AppCompatActivity() {
         }
     }
 
-    fun startSystemCameraToCaptureAnImage(){
+    fun startSystemCameraToCaptureAnImage() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         try {
-            val directory = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "demo_directory")
+            val directory =
+                File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "demo_directory")
             directory.mkdirs() // Create the directory if it doesn't exist
 
             val file = File(directory, "demo.jpg")
@@ -103,8 +114,57 @@ class LencfyMainActivity() : AppCompatActivity() {
         }
     }
 
+    fun downloadImgFromRemoteUrl() {
+        binding.urlInputLayout.visibility = View.VISIBLE
+        val enteredUrlEditText = binding.enteredUrl
+        var enteredUrl: String = ""
 
-    fun openEditor(inputImage: Uri?) {
+        try {
+            enteredUrlEditText.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    enteredUrl = binding.enteredUrl.text.toString()
+                    // hide the keyboard
+                    val imm =
+                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(enteredUrlEditText.windowToken, 0)
+                    if(enteredUrl.isNotEmpty() or enteredUrl.isNotBlank()) {
+                        binding.urlInputLayout.visibility = View.GONE
+                        binding.progressBar.visibility = View.VISIBLE
+                        GlobalScope.launch {
+                            val file = withContext(Dispatchers.IO) {
+                                runCatching {
+                                    val file = File.createTempFile("demo", ".jpg")
+                                    URL(enteredUrl).openStream()
+                                        .use { input ->
+                                            file.outputStream().use { output ->
+                                                input.copyTo(output)
+                                            }
+                                        }
+                                    file
+                                }.getOrNull()
+                            }
+                            file?.let {
+                                openEditor(Uri.fromFile(it))
+                            }
+                        }
+                    }
+                    true
+                } else {
+                    false
+                }
+            }
+        }catch (ex: Exception) {
+            binding.progressBar.visibility = View.GONE
+            Toast.makeText(
+                this,
+                "Remote Connection Error!",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+
+    private fun openEditor(inputImage: Uri?) {
         val settingsList = createPesdkSettingsList()
 
         settingsList.configure<LoadSettings> {
@@ -184,15 +244,13 @@ class LencfyMainActivity() : AppCompatActivity() {
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-
                 lastState.release()
-
             }
         }
 
     }
-    private fun createPesdkSettingsList() =
-        PhotoEditorSettingsList(true)
+
+    private fun createPesdkSettingsList() = PhotoEditorSettingsList(true)
             .configure<UiConfigFilter> {
                 it.setFilterList(FilterPackBasic.getFilterPack())
             }
