@@ -41,3 +41,7 @@ Lencfy 🚀 – Your go-to photo editing tool. Lens It, Own It, Revolutionize yo
 </td>
 </tr>
 </table>
+
+***
+
+Credit [IMG.Ly](https://img.ly/docs/pesdk/android/getting-started/integration/)
