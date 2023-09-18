@@ -1,6 +1,3 @@
-> [!NOTE]
-> Still on Work.
-
 <p align="center">
 	<img src="app/src/main/res/drawable/lencfy_bgremoved_logo.png" alt="flashscreen" width="13%">
 	<h4 align="center">
